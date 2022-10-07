@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 
@@ -7,6 +7,9 @@ const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
+
+  const [ walletAddress, setWalletAddress ] = useState(null);
+
 
   // check if phantom is connected or not
   const checkIfWalletIsConnected = async () => {
@@ -19,10 +22,38 @@ const App = () => {
         response.publicKey.toString()
       );
 
+      //set user's public key to state in order to use later
+      setWalletAddress(response.publicKey.toString());
+
     } else {
       console.log('Please connect a wallet');
     }
   }
+
+  const connectWallet = async () => {
+
+    const { solana } = window;
+    if (solana) {
+      const response = await solana.connect();
+      console.log(' Connected with Public Key: ',
+        response.publicKey.toString()
+      );
+
+      setWalletAddress(response.publicKey.toString());
+    }
+
+  }
+
+  //render this UI when user hasn't connected their
+  //wallet to our app
+  const renderNotConnectedContainer = () => (
+    <button
+      className='cta-button connect-wallet-button'
+      onClick={connectWallet}
+    >
+      connect to Wallet
+    </button>
+  )
 
   useEffect(() => {
     const onLoad = async () => {
@@ -34,12 +65,15 @@ const App = () => {
 
   return (
     <div className="App">
-      <div className="container">
+
+      <div className={walletAddress ? 'authed-container': 'container' }>
+
         <div className="header-container">
           <p className="header">🖼 GIF Portal</p>
           <p className="sub-text">
             View your GIF collection in the metaverse ✨
           </p>
+          { !walletAddress && renderNotConnectedContainer()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />

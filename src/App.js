@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 
@@ -6,6 +7,16 @@ const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
+
+  // check if phantom is connected or not
+  const checkIfWalletIsConnected = async () => {
+    if (window?.solana?.isPhantom) {
+      console.log('Phantom wallet available');
+    } else {
+      console.log('Please connect a wallet');
+    }
+  }
+
   return (
     <div className="App">
       <div className="container">

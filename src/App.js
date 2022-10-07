@@ -12,10 +12,25 @@ const App = () => {
   const checkIfWalletIsConnected = async () => {
     if (window?.solana?.isPhantom) {
       console.log('Phantom wallet available');
+
+      const response = await window.solana.connect({ onlyIfTrusted: true });
+      console.log(
+        'Connected with Public Key:',
+        response.publicKey.toString()
+      );
+
     } else {
       console.log('Please connect a wallet');
     }
   }
+
+  useEffect(() => {
+    const onLoad = async () => {
+      await checkIfWalletIsConnected();
+    }
+    window.addEventListener('load', onLoad);
+    return () => window.removeEventListener('load', onLoad);
+  }, [])
 
   return (
     <div className="App">

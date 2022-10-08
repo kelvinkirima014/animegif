@@ -62,6 +62,18 @@ const App = () => {
     </button>
   )
 
+  const renderConnectedContainer = () => (
+    <div className='connected-container'>
+      <div className='gif-grid'>
+        {TEST_GIFS.map(gif => (
+          <div className='gif-item' key={gif}>
+            <img src={gif} alt={gif} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
   useEffect(() => {
     const onLoad = async () => {
       await checkIfWalletIsConnected();
@@ -80,7 +92,8 @@ const App = () => {
           <p className="sub-text">
             View your  Fav Anime GIF collection in the metaverse ✨
           </p>
-          { !walletAddress && renderNotConnectedContainer()}
+          { !walletAddress && renderNotConnectedContainer() }
+          { walletAddress && renderConnectedContainer() }
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />

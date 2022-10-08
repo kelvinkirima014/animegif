@@ -5,6 +5,13 @@ import './App.css';
 // Constants
 const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
+const TEST_GIFS = [
+  'https://media.giphy.com/media/wJ8QGSXasDvPy/giphy.gif',
+  'https://media.giphy.com/media/3ohzdI8r7iWMLCvTYk/giphy.gif',
+  'https://media.giphy.com/media/UTek0q3N8osh8agH4Y/giphy.gif',
+  'https://media.giphy.com/media/SJXzadwbexJEAZ9S1B/giphy.gif',
+  'https://media.giphy.com/media/SgMZCcCv8Thm0/giphy.gif',
+]
 
 const App = () => {
 

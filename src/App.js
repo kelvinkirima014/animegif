@@ -130,17 +130,10 @@ const App = () => {
     return () => window.removeEventListener('load', onLoad);
   }, [])
 
-  useEffect(() => {
-    if (walletAddress) {
-      console.log('Fetching gif list...');
-
-      //call Solana program here
-
-      //set state
-      setGifList(TEST_GIFS);
-
-    }
-  }, [walletAddress]);
+  const getProgram = async() => {
+    const idl = await Program.fetchIdl(programID, getProvider());
+    return new Program(idl, programID, getProvider());
+  }
 
   return (
     <div className="App">

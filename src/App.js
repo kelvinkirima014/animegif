@@ -70,6 +70,14 @@ const App = () => {
     setInputValue(value);
   }
 
+  const getProvider = () => {
+    const connection = new Connection(network, opts.preflightCommitment);
+    const provider = new Anchorprovider(
+      connection, window.solana, opts.preflightCommitment
+    );
+    return provider;
+  }
+
   //render this UI when user hasn't connected their
   //wallet to our app
   const renderNotConnectedContainer = () => (

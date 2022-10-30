@@ -3,8 +3,10 @@ import twitterLogo from './assets/twitter-logo.svg';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import './App.css';
 import {
-  Program, web3, Provider
+  Program, AnchorProvider
 } from '@project-serum/anchor';
+import {web3} from '@project-serum/anchor';
+import idl from './idl.json';
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
@@ -20,19 +22,25 @@ const TEST_GIFS = [
 ]
 */
 
+//reference to solana runtime
+const { SystemProgram, Keypair } = web3;
+
+const baseAccount = Keypair.generate();
+
+const programID = new PublicKey(idl.metadata.address);
+
+const network = clusterApiUrl('devnet');
+
+const opts= {
+  preflightCommitment: "processed"
+}
+
+
 const App = () => {
 
   const [ walletAddress, setWalletAddress ] = useState(null);
   const [ inputValue, setInputValue ] = useState('');
   const [ gifList, setGifList ] = useState([]);
-  const {SystemProgram, Keypair} = web3;
-  let baseAccount = Keypair.generate();
-  const programID = new PublicKey("2amGSCnMV6RzJothNXnskJLcJoEykXNfgNssFbtwRkVL");
-  const network = clusterApiUrl('devnet');
-  const opts= {
-    preflightCommitment: "Processed"
-  }
- 
 
   // check if phantom is connected or not
   const checkIfWalletIsConnected = async () => {
@@ -84,7 +92,7 @@ const App = () => {
 
   const getProvider = () => {
     const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new Provider(
+    const provider = new AnchorProvider(
       connection, window.solana, opts.preflightCommitment
     );
     return provider;
@@ -119,7 +127,7 @@ const App = () => {
       className='cta-button connect-wallet-button'
       onClick={connectWallet}
     >
-      connect to Wallet
+      Connect to Wallet
     </button>
   )
   const renderConnectedContainer = () => {
@@ -175,8 +183,8 @@ const App = () => {
   }, [])
 
   const getProgram = async() => {
-    const idl = await Program.fetchIdl(programID, getProvider());
-    return new Program(idl, programID, getProvider());
+    const program = new Program(idl, programID, getProvider());
+    return program;
   }
 
   const getGifList = async() => {

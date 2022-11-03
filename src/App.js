@@ -6,7 +6,8 @@ import {
   Program, AnchorProvider
 } from '@project-serum/anchor';
 import {web3} from '@project-serum/anchor';
-import idl from './idl.json';
+import kp from './keypair.json'
+
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
@@ -18,16 +19,19 @@ const TEST_GIFS = [
   'https://media.giphy.com/media/3ohzdI8r7iWMLCvTYk/giphy.gif',
   'https://media.giphy.com/media/UTek0q3N8osh8agH4Y/giphy.gif',
   'https://media.giphy.com/media/SJXzadwbexJEAZ9S1B/giphy.gif',
-  'https://media.giphy.com/media/SgMZCcCv8Thm0/giphy.gif',
+  '',
 ]
 */
 
 //reference to solana runtime
-const { SystemProgram, Keypair } = web3;
+const { SystemProgram } = web3;
 
-const baseAccount = Keypair.generate();
+const arr = Object.values(kp._keypair.secretKey)
+const secret = new Uint8Array(arr)
+const baseAccount = web3.Keypair.fromSecretKey(secret)
 
-const programID = new PublicKey(idl.metadata.address);
+
+const programID = new PublicKey("2amGSCnMV6RzJothNXnskJLcJoEykXNfgNssFbtwRkVL");
 
 const network = clusterApiUrl('devnet');
 
@@ -98,15 +102,20 @@ const App = () => {
     return provider;
   }
 
+  const getProgram = async() => {
+    const idl = await Program.fetchIdl(programID, getProvider());
+    return new Program(idl, programID, getProvider());
+  }
+
   const createGifAccount = async() => {
     try {
       const provider = getProvider();
       const program = await getProgram();
       console.log("Ping");
-      await program.rpc.initialize({
+      await program.methods.initialize({
         accounts: {
           baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey,
+          signer: provider.wallet.publicKey,
           systemProgram: SystemProgram.programId,
         },
         signers: [baseAccount]
@@ -182,10 +191,10 @@ const App = () => {
     return () => window.removeEventListener('load', onLoad);
   }, [])
 
-  const getProgram = async() => {
-    const program = new Program(idl, programID, getProvider());
-    return program;
-  }
+  // const getProgram = async() => {
+  //   const idl = await Program.fetchIdl(programID, getProvider());
+  //   return new Program(idl, programID, getProvider());
+  // };
 
   const getGifList = async() => {
     try{
@@ -193,7 +202,9 @@ const App = () => {
       const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
 
       console.log("Got the account: ", account);
+
       setGifList(account.gifList);
+
     } catch(error){
         console.log("Error getting gif list: ", error);
         setGifList(null);
